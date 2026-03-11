@@ -1,0 +1,16 @@
+# MoG (Manifold-Optimal Guidance)
+# Core dependencies
+torch>=2.0.0
+diffusers>=0.25.0
+transformers>=4.30.0
+accelerate>=0.20.0
+safetensors>=0.3.0
+
+# Visualization
+matplotlib>=3.5.0
+Pillow>=9.0.0
+
+# Toy experiments (optional)
+scipy>=1.10.0
+numpy>=1.23.0
+seaborn>=0.12.0
