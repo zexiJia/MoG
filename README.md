@@ -1,34 +1,61 @@
 <div align="center">
 
-# MoG: Manifold-Optimal Guidance for Diffusion Models
+# 🧭 MoG
 
-**A training-free, plug-and-play guidance method that replaces standard CFG with Riemannian natural gradient, delivering better image quality across any diffusion architecture.**
+### Manifold-Optimal Guidance for Diffusion Models
+
+<a href="" target="_blank">
+    <img alt="arXiv" src="https://img.shields.io/badge/arXiv-TBD-red?logo=arxiv" height="25" />
+</a>
+<a href="LICENSE" target="_blank">
+    <img alt="License" src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" height="25" />
+</a>
+
+**A training-free, plug-and-play guidance framework that replaces standard classifier-free guidance (CFG) with geometry-aware manifold-optimal guidance.**
 
 </div>
 
-## Highlights
+---
 
-- **Training-Free**: Drop-in replacement for Classifier-Free Guidance (CFG) — no fine-tuning, no extra parameters.
-- **Universal**: Works with SDXL, SD3, SD3.5, FLUX.1, and any diffusion pipeline that uses CFG.
-- **Principled**: Based on Riemannian natural gradient on the data manifold — theoretically grounded, not heuristic.
-- **Auto-Adaptive**: Auto-MOG mode automatically balances guidance strength via energy normalization — no manual tuning of guidance scale.
-- **Zero Overhead**: Same computational cost as standard CFG (one extra vector decomposition per step).
+## 🌟 Overview
 
-## Core Idea
+MoG (**Manifold-Optimal Guidance**) is a training-free guidance framework for diffusion models.  
+Instead of applying classifier-free guidance as a Euclidean extrapolation in ambient space, MoG reformulates guidance as a **local Riemannian optimal control problem**, yielding a geometry-aware update that better follows the data manifold and reduces common high-scale CFG artifacts.
 
-Standard CFG applies guidance in Euclidean space, which can push samples **off the data manifold**, causing artifacts like oversaturation, unnatural colors, and loss of fine detail.
+This repository provides two practical variants:
 
-MoG redefines guidance using a **Riemannian metric tensor** that decomposes the guidance signal into:
-- **Parallel component** (along the data manifold) — amplified for faster convergence
-- **Perpendicular component** (away from the manifold) — suppressed to prevent artifacts
+| Method | Full Name | Level | Description | Direction |
+|--------|-----------|-------|-------------|-----------|
+| **MOG-Score** | Score-based Manifold-Optimal Guidance | Step-level guidance | Uses an anisotropic score-induced metric to suppress off-manifold drift during sampling | Better quality/alignment |
+| **Auto-MOG** | Automatic Manifold-Optimal Guidance | Step-level guidance | Dynamically balances guidance strength via an energy-based scaling rule, reducing manual tuning | Better quality/alignment |
 
-```
-Standard CFG:    v_guided = v_uncond + w * (v_cond - v_uncond)
+### Key Features
 
-MoG (Ours):      v_guided = v_uncond + scale * M^{-1} * (v_cond - v_uncond)
-                 where M^{-1} = (1/lambda_perp) * I
-                              + (1/lambda_para - 1/lambda_perp) * s0 * s0^T / ||s0||^2
-```
+- **🧠 Geometry-Aware Guidance**: Replaces Euclidean CFG with a Riemannian natural-gradient style update
+- **🪶 Training-Free**: No retraining, fine-tuning, or extra learnable parameters
+- **🔌 Plug-and-Play**: Can be integrated into existing diffusion sampling pipelines with minimal code changes
+- **🌍 Architecture-Agnostic**: Applicable to multiple diffusion backbones, including latent diffusion, DiT-style models, and flow-based transformers
+- **⚡ Lightweight**: Introduces only negligible extra computation beyond standard CFG
+- **🎛️ Auto-Adaptive**: Auto-MOG automatically calibrates guidance strength during sampling
+
+---
+
+## 📌 Motivation
+
+Standard classifier-free guidance (CFG) works by linearly extrapolating between unconditional and conditional predictions.  
+While effective, large guidance scales often push trajectories away from the high-density data manifold, leading to:
+
+- oversaturation
+- unnatural textures
+- structural distortion
+- poor fidelity/alignment trade-offs
+
+MoG addresses this by applying guidance under a **Riemannian metric**, which penalizes off-manifold directions and preserves efficient progress along the manifold.
+
+In practice, MoG replaces:
+
+```python
+guided = uncond + cfg_scale * (cond - uncond)
 
 ## Quick Start
 
