@@ -245,41 +245,19 @@ Given the unconditional prediction $s_0 = s_\theta(x_t, \emptyset)$ and conditio
 
 1. Compute the conditional difference:
 
-   $$
-   \delta = s_c - s_0
-   $$
+$$ \delta = s_c - s_0 $$
 
 2. Apply the Riemannian metric inverse $M^{-1}$:
 
-   $$
-   v_{\text{nat}} =
-   \frac{1}{\lambda_\perp}\delta
-   +
-   \left(
-   \frac{1}{\lambda_\parallel} - \frac{1}{\lambda_\perp}
-   \right)
-   \frac{\langle s_0, \delta \rangle}{|s_0|^2} s_0
-   $$
+$$ v_{\mathrm{nat}} = \frac{1}{\lambda_\perp}\,\delta + \left(\frac{1}{\lambda_\parallel} - \frac{1}{\lambda_\perp}\right)\frac{\langle s_0, \delta \rangle}{\|s_0\|^2}\, s_0 $$
 
 3. Compute automatic energy balancing:
 
-   $$
-   \text{scale} = \gamma \cdot \frac{|s_0|}{|v_{\text{nat}}|}
-   $$
+$$ \mathrm{scale} = \gamma \cdot \frac{\|s_0\|}{\|v_{\mathrm{nat}}\|} $$
 
 4. Produce the final guided score:
 
-   $$
-   s_{\text{guided}} = s_0 + \text{clamp}(\text{scale}) \cdot v_{\text{nat}}
-   $$
-
-### Intuition
-
-* $\lambda_\parallel < \lambda_\perp$ means moving along the score direction is cheaper than moving perpendicular to it
-* The metric inverse $M^{-1}$ acts as a preconditioner that rotates and rescales the guidance direction
-* Auto-scaling adapts the guidance magnitude to local geometry, reducing the need for manual CFG tuning
-
----
+$$ s_{\mathrm{guided}} = s_0 + \mathrm{clamp}(\mathrm{scale}) \cdot v_{\mathrm{nat}} $$
 
 ## 📚 Citation
 
@@ -308,6 +286,3 @@ If you find this work useful in your research, please cite:
 ## 📄 License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
-
-`Updates`、`TODO`、`Results`、`BibTeX` 高亮区、`Teaser Figure` 占位、`Contact`。
-```
